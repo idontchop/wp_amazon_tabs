@@ -42,6 +42,16 @@ class Product extends React.Component {
 
         }
     
+        componentDidMount () {
+            fetch ('http://localhost/~nate/wp-json/idc_product_tabs/v1/get_menu/1')
+            .then ( response => response.json())
+            .then ( responseData => {
+                console.log(responseData);
+                this.setState ( {subtitle: responseData[0].subtitle });
+
+            })
+            .catch ( err => console.error(err) );
+        }
 
 
     changeProduct = ( selected ) => {
@@ -71,20 +81,15 @@ class Product extends React.Component {
 /**
  * Accepts the text url and a subtitle
  */
-function TextUrl (props) {
-    return (
+const TextUrl = (props) => (
         <p><a href={props.url}>{props.subtitle}</a>
         </p>
-    )
-}
+)
 
 /**
- * switching it up with a class for the PicUrl (no reason just practice)
+ * sets the html from amazon
  */
-class PicUrl extends React.Component  {
-    render () {
-        return <div dangerouslySetInnerHTML = {{__html: this.props.url}} />
-    }
-}
-
+const PicUrl = (props) => (
+    <div dangerouslySetInnerHTML = {{__html: props.url}} /> )
+    
 export default Product;
