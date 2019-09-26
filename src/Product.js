@@ -1,14 +1,22 @@
 import React from 'react';
 
 
+/**
+ * This was a learning class and not designed with best practices or patterns.
+ */
 class Product extends React.Component {
 
     constructor (props) {
         super(props);
         this.state = this.props.product[0];
         this.state.num = 0;
+        
+
+        // inline CSS start
         this.menuStyle = {overflow: 'hidden', backgroundColor: '#fff'};
-        let buttonWidth = (1.0/  this.props.product.length) * 100;
+
+        // Define button styles and size
+        let buttonWidth = (1.0 /  this.props.product.length) * 100;
         this.buttonStyle = {
             backgroundColor: '#ccc',
             float: 'left',
@@ -22,6 +30,7 @@ class Product extends React.Component {
         this.activeButtonStyle = Object.assign ( {}, this.buttonStyle );
         this.activeButtonStyle.backgroundColor = '#fff';
 
+        // Define the main pane size
         this.paneStyle = {
             backgroundColor: '#fff',
             marginLeft: 'auto',
@@ -30,9 +39,17 @@ class Product extends React.Component {
             display: 'block',
             width: '70%',
             maxWidth: '600px',
-            padding: '0'
+            padding: '0',
+            writeable: true
         }
 
+        this.paneStyleMobile = Object.assign ( {}, this.paneStyle );
+        this.paneStyleMobile.width = '100%';
+
+        // Used to resize, other setting: 'small' set in DidMount
+        this.setState.view = 'large';
+
+        // internal pain where props are printed
         this.internalStyle = {
             backgroundColor: '#fff',
             textAlign: 'center',
@@ -51,6 +68,12 @@ class Product extends React.Component {
 
             })
             .catch ( err => console.error(err) );
+
+            /* If we are mobile, we want to be 100% */
+            if ( window.innerWidth < 721 ) {
+                this.setState ({ view: 'small'} );
+            }
+
         }
 
 
@@ -62,17 +85,17 @@ class Product extends React.Component {
 
     render () {
         return (
-        <div style={this.paneStyle}>
-        <div style={this.menuStyle}>{/* Tab Buttons */}
-            {this.props.product.map( (o, index) => 
-                <button style={ this.state.num === index ? this.activeButtonStyle : this.buttonStyle } 
-                onClick={ (e) => this.changeProduct(index)} key={index}>{o.site}</button>)}
-        </div>
-        <div style={this.internalStyle}>
-            <h1>This is a {this.state.name}</h1>
-            <PicUrl url = {this.state.url} />
-            <TextUrl url = {this.state.textUrl} subtitle={this.state.subtitle} />
-        </div>
+        <div style={ this.state.view == 'small' ? this.paneStyleMobile: this.paneStyle}>
+            <div style={this.menuStyle}>{/* Tab Buttons */}
+                {this.props.product.map( (o, index) => 
+                    <button style={ this.state.num === index ? this.activeButtonStyle : this.buttonStyle } 
+                    onClick={ (e) => this.changeProduct(index)} key={index}>{o.site}</button>)}
+            </div>
+            <div style={this.internalStyle}>
+                <h1>This is a {this.state.name}</h1>
+                <PicUrl url = {this.state.url} />
+                <TextUrl url = {this.state.textUrl} subtitle={this.state.subtitle} />
+            </div>
         </div>
         );
     }
