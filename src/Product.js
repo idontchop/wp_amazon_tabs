@@ -9,8 +9,10 @@ class Product extends React.Component {
     constructor (props) {
         super(props);
         this.state = this.props.product[0];
-        this.state.num = 0;
+        this.state.selected = 0;
         
+        // init empty products state
+
 
         // inline CSS start
         this.menuStyle = {overflow: 'hidden', backgroundColor: '#fff'};
@@ -38,7 +40,8 @@ class Product extends React.Component {
             border: '1px solid #000',
             display: 'block',
             width: '70%',
-            maxWidth: '600px',
+            minheight: '300px',
+            maxWidth: '720px',
             padding: '0',
             writeable: true
         }
@@ -63,8 +66,8 @@ class Product extends React.Component {
             fetch ('http://localhost/~nate/wp-json/idc_product_tabs/v1/get_menu/1')
             .then ( response => response.json())
             .then ( responseData => {
-                console.log(responseData);
-                this.setState ( {subtitle: responseData[0].subtitle });
+
+                this.setState ( {products: responseData} );
 
             })
             .catch ( err => console.error(err) );
@@ -79,7 +82,7 @@ class Product extends React.Component {
 
     changeProduct = ( selected ) => {
 
-        this.setState( {...this.props.product[selected], num: selected} );
+        this.setState( { selected: selected } );
 
     }
 
@@ -92,14 +95,19 @@ class Product extends React.Component {
                     onClick={ (e) => this.changeProduct(index)} key={index}>{o.site}</button>)}
             </div>
             <div style={this.internalStyle}>
-                <h1>This is a {this.state.name}</h1>
-                <PicUrl url = {this.state.url} />
-                <TextUrl url = {this.state.textUrl} subtitle={this.state.subtitle} />
+                {this.state.products && <Title name = {this.state.products[this.state.selected].name} /> }
+                {this.state.products && <PicUrl url = {this.state.products[this.state.selected].url} /> }
+                {this.state.products && <TextUrl url = {this.state.products[this.state.selected].text_url}
+                    subtitle={this.state.products[this.state.selected].subtitle} /> }
             </div>
         </div>
         );
     }
 }
+
+const Title = (props) => (
+    <h2>{props.name}</h2>
+)
 
 /**
  * Accepts the text url and a subtitle
