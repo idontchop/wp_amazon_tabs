@@ -8,74 +8,65 @@ class Product extends React.Component {
 
     constructor (props) {
         super(props);
-        this.state = this.props.product[0];
-        this.state.selected = 0;
+
+        this.state = { selected: 0 };
         
         // init empty products state
 
-
-        // inline CSS start
-        this.menuStyle = {overflow: 'hidden', backgroundColor: '#fff'};
-
-        // Define button styles and size
-        let buttonWidth = (1.0 /  this.props.product.length) * 100;
-        this.buttonStyle = {
-            backgroundColor: '#ccc',
-            float: 'left',
-            border: 'none',
-            outline: 'none',
-            cursor: 'pointer',
-            padding: '14px 16px',
-            transition: '0.3s',
-            minWidth: buttonWidth + '%'
-        };
-        this.activeButtonStyle = Object.assign ( {}, this.buttonStyle );
-        this.activeButtonStyle.backgroundColor = '#fff';
-
-        // Define the main pane size
-        this.paneStyle = {
-            backgroundColor: '#fff',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            border: '1px solid #000',
-            display: 'block',
-            width: '70%',
-            minheight: '300px',
-            maxWidth: '720px',
-            padding: '0',
-            writeable: true
         }
 
-        this.paneStyleMobile = Object.assign ( {}, this.paneStyle );
-        this.paneStyleMobile.width = '100%';
-
-        // Used to resize, other setting: 'small' set in DidMount
-        this.setState.view = 'large';
-
-        // internal pain where props are printed
-        this.internalStyle = {
-            backgroundColor: '#fff',
-            textAlign: 'center',
-            marginBottom: '0'
-        }
-   
-
+        componentDidMount () {
+            
         }
     
-        componentDidMount () {
-            fetch ('http://localhost/~nate/wp-json/idc_product_tabs/v1/get_menu/1')
-            .then ( response => response.json())
-            .then ( responseData => {
+        componentWillUpdate ( nextProps) {
 
-                this.setState ( {products: responseData} );
+            // inline CSS start
+            this.menuStyle = {overflow: 'hidden', backgroundColor: '#fff'};
 
-            })
-            .catch ( err => console.error(err) );
+            // Define button styles and size
+            let buttonWidth = (nextProps.products ? ((1.0 / nextProps.products.length) * 100) : 100);
+            this.buttonStyle = {
+                backgroundColor: '#ccc',
+                float: 'left',
+                border: 'none',
+                outline: 'none',
+                cursor: 'pointer',
+                padding: '14px 16px',
+                transition: '0.3s',
+                minWidth: buttonWidth + '%'
+            };
+            this.activeButtonStyle = Object.assign ( {}, this.buttonStyle );
+            this.activeButtonStyle.backgroundColor = '#fff';
 
-            /* If we are mobile, we want to be 100% */
-            if ( window.innerWidth < 721 ) {
-                this.setState ({ view: 'small'} );
+            // Define the main pane size
+            this.paneStyle = {
+                backgroundColor: '#fff',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                border: '1px solid #000',
+                display: 'block',
+                width: '70%',
+                minheight: '300px',
+                maxWidth: '720px',
+                padding: '0',
+                writeable: true
             }
+
+            this.paneStyleMobile = Object.assign ( {}, this.paneStyle );
+            this.paneStyleMobile.width = '100%';
+
+            // Used to resize, other setting: 'small' set in DidMount
+            this.setState.view = 'large';
+
+            // internal pain where props are printed
+            this.internalStyle = {
+                backgroundColor: '#fff',
+                textAlign: 'center',
+                marginBottom: '0'
+            }
+
+
 
         }
 
@@ -87,21 +78,23 @@ class Product extends React.Component {
     }
 
     render () {
-        return (
-        <div style={ this.state.view == 'small' ? this.paneStyleMobile: this.paneStyle}>
+        if ( this.props.products == null)
+            return <div></div>;
+        else { return (
+        <div style={ window.innerWidth < 721 ? this.paneStyleMobile: this.paneStyle}>
             <div style={this.menuStyle}>{/* Tab Buttons */}
-                {this.props.product.map( (o, index) => 
-                    <button style={ this.state.num === index ? this.activeButtonStyle : this.buttonStyle } 
-                    onClick={ (e) => this.changeProduct(index)} key={index}>{o.site}</button>)}
+                {this.props.products.map( (o, index) => 
+                    <button style={ this.state.selected === index ? this.activeButtonStyle : this.buttonStyle } 
+                    onClick={ (e) => this.changeProduct(index)} key={index}> {o.site} </button>)}
             </div>
             <div style={this.internalStyle}>
-                {this.state.products && <Title name = {this.state.products[this.state.selected].name} /> }
-                {this.state.products && <PicUrl url = {this.state.products[this.state.selected].url} /> }
-                {this.state.products && <TextUrl url = {this.state.products[this.state.selected].text_url}
-                    subtitle={this.state.products[this.state.selected].subtitle} /> }
+                {this.props.products && <Title name = {this.props.products[this.state.selected].name} /> }
+                {this.props.products && <PicUrl url = {this.props.products[this.state.selected].url} /> }
+                {this.props.products && <TextUrl url = {this.props.products[this.state.selected].text_url}
+                    subtitle={this.props.products[this.state.selected].subtitle} /> }
             </div>
         </div>
-        );
+        )};
     }
 }
 

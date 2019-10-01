@@ -15,9 +15,6 @@ const withRestData = url => Component => (
         constructor (props) {
             super (props);
 
-            this.state = {
-                data: []
-            };
 
         }
 
@@ -26,15 +23,19 @@ const withRestData = url => Component => (
             .then ( response => response.json())
             .then ( responseData => {
 
-                this.setState ( {data: responseData} );
+                this.setState ( {products: responseData} );
+                console.log (responseData);
 
             })
             .catch ( err => console.error(err) );
         }
 
         render () {
+            //return <div></div>;
             return <Component {...this.props} {...this.state} />;
         }
     }
 
 );
+
+export default withRestData;
